@@ -13,13 +13,17 @@ typedef struct Tarea
 
 void mostrarTarea(Tarea *t);
 void mostrarTareas(Tarea **t, int cant);
+Tarea * BuscarTareaPorId(Tarea **tareaP, Tarea **tareaR, int cant, int id);
+Tarea * BuscarTareaPorPalabra(Tarea **tareaP, Tarea **tareaR, int cant, char clave[]);
 
 //Programa Principal
 
 int main(){ 
 
-    int cant, aux;
-    char buff[tama];
+    int cant, aux, id;
+    char buff[tama], buff2[tama];
+    char *clave;
+    Tarea *tareaEncontrada=NULL;
 
     printf("Ingrese la Cantidad de tareas: ");
     scanf("%d", &cant);
@@ -77,9 +81,41 @@ int main(){
     
     printf("\n-----TAREAS PENDIENTES-----\n");
     mostrarTareas(tareasPendientes, cant);
-    
+
+    printf("\nBuscar Tarea, Ingrese un ID: ");
+    scanf("%d", &id);
+
+    tareaEncontrada=BuscarTareaPorId(tareasPendientes, tareasRealizadas, cant, id);
+
+    if(tareaEncontrada != NULL){
+
+        printf("\n-----TAREA ENCONTRADA-----\n");
+        mostrarTarea(tareaEncontrada);
+
+    }else{
+        printf("\n-----NO SE ENCONTRO LA TAREA -----\n");
+    }
+
+    fflush(stdin);
+    printf("\nBuscar Tarea, Ingrese palabra clave: ");
+    gets(buff2);
+    clave=(char*)malloc(sizeof(char)* (strlen(buff2)+1) );
+    strcpy(clave,buff2);
+
+    tareaEncontrada=BuscarTareaPorPalabra(tareasPendientes, tareasRealizadas, cant, clave);
+
+    if(tareaEncontrada != NULL){
+
+        printf("\n-----TAREA ENCONTRADA-----\n");
+        mostrarTarea(tareaEncontrada);
+
+    }else{
+        printf("\n-----NO SE ENCONTRO LA TAREA -----\n");
+    }
+
     return 0;
 }
+
 
 //Funcion para mostrar la Tarea
 
@@ -102,4 +138,46 @@ void mostrarTareas(Tarea **t, int cant){
             mostrarTarea(t[i]);
         }
     }
+}
+
+//Funcion para Buscar una Tarea por ID
+
+Tarea * BuscarTareaPorId(Tarea **tareaP, Tarea **tareaR, int cant, int id){
+
+    if(tareaP!=NULL && tareaR!=NULL){
+
+        for (int i=0; i<cant; i++)
+        {
+            if(tareaP[i]!=NULL && tareaP[i]->TareaID==id){
+
+                return(tareaP[i]);
+
+            }else if (tareaR[i]!=NULL && tareaR[i]->TareaID==id){
+
+                return(tareaR[i]);
+            }
+        }
+    }
+    return(NULL);
+}
+
+//FUncion para Buscar una Tarea por palabra clave
+
+Tarea * BuscarTareaPorPalabra(Tarea **tareaP, Tarea **tareaR, int cant, char clave[]){
+
+    if(tareaP!=NULL && tareaR!=NULL){
+
+        for (int i=0; i<cant; i++)
+        {
+            if(tareaP[i]!=NULL && strstr(tareaP[i]->Descripcion, clave)!=NULL){
+
+                return(tareaP[i]);
+
+            }else if (tareaR[i]!=NULL && strstr(tareaR[i]->Descripcion, clave)!= NULL){
+
+                return(tareaR[i]);
+            }
+        }
+    }
+    return(NULL);
 }
